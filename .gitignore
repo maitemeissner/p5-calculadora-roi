@@ -1,1 +1,8 @@
-node_modules/\n.next/\n.env\n.wrangler\n__pycache__/\n*.pyc\n
+node_modules/
+.next/
+dist/
+*.tsbuildinfo
+.env
+.env.local
+.wrangler/
+worker/

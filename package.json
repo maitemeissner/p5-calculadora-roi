@@ -1,5 +1,15 @@
 {
   "name": "p5-calculadora-roi",
+  "version": "1.0.0",
   "private": true,
-  "scripts": { "dev:front": "cd apps/frontend && npm run dev", "dev:api": "cd apps/worker-api && wrangler dev" }
+  "workspaces": [
+    "apps/frontend",
+    "apps/worker-api",
+    "apps/worker-cron"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace=apps/frontend",
+    "build": "npm run build --workspace=apps/frontend",
+    "deploy": "npm run deploy --workspace=apps/frontend && npm run deploy --workspace=apps/worker-api && npm run deploy --workspace=apps/worker-cron"
+  }
 }

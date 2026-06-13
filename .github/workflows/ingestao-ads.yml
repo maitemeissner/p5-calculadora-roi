@@ -1,15 +1,36 @@
-name: Ingestão Ads
+name: Ingestão de Dados de Anúncios
+
 on:
   schedule:
-    - cron: '0 5 * * 1'
+    - cron: "0 6 * * 1"
   workflow_dispatch:
+
 jobs:
-  ingest:
+  ingest-meta:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Ingest mock data
-        run: |
-          curl -X POST ${{ secrets.API_URL }}/api/otimizar \
-            -H "Content-Type: application/json" \
-            -d '{"budget":5000,"campanhas":[{"nome":"Meta","roas":3.5},{"nome":"Google","roas":2.8}]}'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r ingestao/requirements.txt
+      - run: python ingestao/ingest_meta.py
+        env:
+          META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
+          META_AD_ACCOUNT_ID: ${{ secrets.META_AD_ACCOUNT_ID }}
+
+  ingest-google:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r ingestao/requirements.txt
+      - run: python ingestao/ingest_google.py
+        env:
+          GOOGLE_ADS_DEVELOPER_TOKEN: ${{ secrets.GOOGLE_ADS_DEVELOPER_TOKEN }}
+          GOOGLE_ADS_CLIENT_ID: ${{ secrets.GOOGLE_ADS_CLIENT_ID }}
+          GOOGLE_ADS_CLIENT_SECRET: ${{ secrets.GOOGLE_ADS_CLIENT_SECRET }}
+          GOOGLE_ADS_REFRESH_TOKEN: ${{ secrets.GOOGLE_ADS_REFRESH_TOKEN }}
+          GOOGLE_ADS_LOGIN_CUSTOMER_ID: ${{ secrets.GOOGLE_ADS_LOGIN_CUSTOMER_ID }}

@@ -1,52 +1,89 @@
 import { useState, useEffect } from 'react';
+import type { NextPage } from 'next';
 
-export default function Home() {
-  const [campanhas, setCampanhas] = useState<any[]>([]);
-  const [budget, setBudget] = useState('5000');
-  const [resultado, setResultado] = useState<any>(null);
+interface Campanha {
+  id: number;
+  nome: string;
+  canal: string;
+  investimento: number;
+  receita: number;
+  roas: number;
+  roi: number;
+}
+
+interface Resumo {
+  canal: string;
+  total_investimento: number;
+  total_receita: number;
+  roas_medio: number;
+}
+
+const Home: NextPage = () => {
+  const [campanhas, setCampanhas] = useState<Campanha[]>([]);
+  const [resumo, setResumo] = useState<Resumo[]>([]);
 
   useEffect(() => {
-    fetch('/api/campanhas').then(r => r.json()).then(d => setCampanhas(d.campanhas || [])).catch(() => {});
+    fetch('/api/roi/resumo')
+      .then(r => r.json())
+      .then(setResumo);
+    fetch('/api/campanhas')
+      .then(r => r.json())
+      .then(setCampanhas);
   }, []);
 
-  const otimizar = async () => {
-    const res = await fetch('/api/otimizar', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ budget: parseFloat(budget), campanhas }),
-    });
-    setResultado(await res.json());
-  };
-
   return (
-    <div style={{ padding: '2rem', fontFamily: 'sans-serif', maxWidth: 700, margin: '0 auto' }}>
-      <h1>Calculadora ROI + Otimização de Budget</h1>
-
-      <h2>Campanhas</h2>
-      <table border={1} cellPadding={6} style={{ borderCollapse: 'collapse', width: '100%' }}>
-        <thead><tr><th>Nome</th><th>Plataforma</th><th>ROAS</th><th>Investimento</th></tr></thead>
+    <div style={{ fontFamily: 'sans-serif', padding: '2rem' }}>
+      <h1>Dashboard ROI / ROAS</h1>
+      <h2>Resumo por Canal</h2>
+      <table border={1} cellPadding={8} style={{ borderCollapse: 'collapse', width: '100%', marginBottom: '2rem' }}>
+        <thead>
+          <tr>
+            <th>Canal</th>
+            <th>Investimento Total</th>
+            <th>Receita Total</th>
+            <th>ROAS Médio</th>
+          </tr>
+        </thead>
         <tbody>
-          {campanhas.map((c: any, i: number) => (
-            <tr key={i}><td>{c.nome}</td><td>{c.plataforma}</td><td>{c.roas}x</td><td>R$ {c.investimento}</td></tr>
+          {resumo.map(r => (
+            <tr key={r.canal}>
+              <td>{r.canal}</td>
+              <td>R$ {r.total_investimento.toFixed(2)}</td>
+              <td>R$ {r.total_receita.toFixed(2)}</td>
+              <td>{r.roas_medio.toFixed(2)}x</td>
+            </tr>
           ))}
         </tbody>
       </table>
-
-      <h2>Simulador de Alocação</h2>
-      <label>Budget total (R$): <input value={budget} onChange={e => setBudget(e.target.value)} /></label>
-      <button onClick={otimizar} style={{ marginLeft: '0.5rem' }}>Otimizar</button>
-
-      {resultado && (
-        <div style={{ marginTop: '1rem', padding: '1rem', background: '#e9ecef' }}>
-          <h3>Alocação Recomendada</h3>
-          <p>ROAS Estimado: <strong>{resultado.roas_estimado}x</strong></p>
-          <ul>
-            {resultado.alocacao?.map((a: any, i: number) => (
-              <li key={i}>{a.campanha}: R$ {a.alocado?.toFixed(2)}</li>
-            ))}
-          </ul>
-        </div>
-      )}
+      <h2>Campanhas</h2>
+      <table border={1} cellPadding={8} style={{ borderCollapse: 'collapse', width: '100%' }}>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>Canal</th>
+            <th>Investimento</th>
+            <th>Receita</th>
+            <th>ROAS</th>
+            <th>ROI</th>
+          </tr>
+        </thead>
+        <tbody>
+          {campanhas.map(c => (
+            <tr key={c.id}>
+              <td>{c.id}</td>
+              <td>{c.nome}</td>
+              <td>{c.canal}</td>
+              <td>R$ {c.investimento.toFixed(2)}</td>
+              <td>R$ {c.receita.toFixed(2)}</td>
+              <td>{c.roas.toFixed(2)}x</td>
+              <td>{c.roi.toFixed(2)}%</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
-}
+};
+
+export default Home;

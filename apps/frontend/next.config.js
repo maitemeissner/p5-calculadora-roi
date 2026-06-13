@@ -1,1 +1,0 @@
-/** @type {import('next').NextConfig} */\nconst nextConfig = { output: 'export' };\nmodule.exports = nextConfig;\n
