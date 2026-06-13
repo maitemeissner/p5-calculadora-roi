@@ -1,0 +1,5 @@
+{
+  "name": "p5-calculadora-roi",
+  "private": true,
+  "scripts": { "dev:front": "cd apps/frontend && npm run dev", "dev:api": "cd apps/worker-api && wrangler dev" }
+}
