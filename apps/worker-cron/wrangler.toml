@@ -1,0 +1,11 @@
+name = "p5-cron-roi"
+compatibility_date = "2026-01-01"
+main = "src/index.ts"
+
+[triggers]
+crons = ["0 6 * * 1"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "p5-roi"
+database_id = "your-database-id"
