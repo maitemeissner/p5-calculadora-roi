@@ -1,0 +1,8 @@
+{
+  "name": "p5-worker-api",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": { "dev": "wrangler dev", "deploy": "wrangler deploy" },
+  "dependencies": { "hono": "^4.5.0" },
+  "devDependencies": { "wrangler": "^3.70.0" }
+}
