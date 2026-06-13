@@ -1,0 +1,8 @@
+name = "p5-api-roi"
+compatibility_date = "2026-01-01"
+main = "src/index.ts"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "p5-roi"
+database_id = "your-database-id"
